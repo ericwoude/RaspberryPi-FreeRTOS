@@ -1,6 +1,6 @@
 /*
     FreeRTOS V7.2.0 - Copyright (C) 2012 Real Time Engineers Ltd.
-	
+
 
     ***************************************************************************
      *                                                                       *
@@ -40,7 +40,7 @@
     FreeRTOS WEB site.
 
     1 tab == 4 spaces!
-    
+
     ***************************************************************************
      *                                                                       *
      *    Having a problem?  Start by reading the FAQ "My application does   *
@@ -50,17 +50,17 @@
      *                                                                       *
     ***************************************************************************
 
-    
-    http://www.FreeRTOS.org - Documentation, training, latest information, 
+
+    http://www.FreeRTOS.org - Documentation, training, latest information,
     license and contact details.
-    
+
     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
     including FreeRTOS+Trace - an indispensable productivity tool.
 
-    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell 
-    the code with commercial support, indemnification, and middleware, under 
+    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell
+    the code with commercial support, indemnification, and middleware, under
     the OpenRTOS brand: http://www.OpenRTOS.com.  High Integrity Systems also
-    provide a safety engineered and independently SIL3 certified version under 
+    provide a safety engineered and independently SIL3 certified version under
     the SafeRTOS brand: http://www.SafeRTOS.com.
 *
 *
@@ -69,7 +69,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-#include <Drivers/irq.h>
+#include <irq/irq.h>
 
 /* Constants required to setup the task context. */
 #define portINITIAL_SPSR						( ( portSTACK_TYPE ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
@@ -102,19 +102,19 @@ static volatile BCM2835_TIMER_REGS * const pRegs = (BCM2835_TIMER_REGS *) (portT
 /* Setup the timer to generate the tick interrupts. */
 static void prvSetupTimerInterrupt( void );
 
-/* 
- * The scheduler can only be started from ARM mode, so 
- * vPortISRStartFirstSTask() is defined in portISR.c. 
+/*
+ * The scheduler can only be started from ARM mode, so
+ * vPortISRStartFirstSTask() is defined in portISR.c.
  */
 extern void vPortISRStartFirstTask( void );
 
 /*-----------------------------------------------------------*/
 
-/* 
- * Initialise the stack of a task to look exactly as if a call to 
+/*
+ * Initialise the stack of a task to look exactly as if a call to
  * portSAVE_CONTEXT had been called.
  *
- * See header file for description. 
+ * See header file for description.
  */
 portSTACK_TYPE *pxPortInitialiseStack( portSTACK_TYPE *pxTopOfStack, pdTASK_CODE pxCode, void *pvParameters )
 {
@@ -126,43 +126,43 @@ portSTACK_TYPE *pxOriginalTOS;
 	is not really required. */
 	pxTopOfStack--;
 
-	/* Setup the initial stack of the task.  The stack is set exactly as 
+	/* Setup the initial stack of the task.  The stack is set exactly as
 	expected by the portRESTORE_CONTEXT() macro. */
 
 	/* First on the stack is the return address - which in this case is the
 	start of the task.  The offset is added to make the return address appear
 	as it would within an IRQ ISR. */
-	*pxTopOfStack = ( portSTACK_TYPE ) pxCode + portINSTRUCTION_SIZE;		
+	*pxTopOfStack = ( portSTACK_TYPE ) pxCode + portINSTRUCTION_SIZE;
 	pxTopOfStack--;
 
 	*pxTopOfStack = ( portSTACK_TYPE ) 0xaaaaaaaa;	/* R14 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) pxOriginalTOS; /* Stack used when task starts goes in R13. */
 	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x12121212;	/* R12 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x11111111;	/* R11 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x10101010;	/* R10 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x09090909;	/* R9 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x08080808;	/* R8 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x07070707;	/* R7 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x06060606;	/* R6 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x05050505;	/* R5 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x04040404;	/* R4 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x03030303;	/* R3 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x02020202;	/* R2 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 	*pxTopOfStack = ( portSTACK_TYPE ) 0x01010101;	/* R1 */
-	pxTopOfStack--;	
+	pxTopOfStack--;
 
 	/* When the task starts it will expect to find the function parameter in
 	R0. */
@@ -181,7 +181,7 @@ portSTACK_TYPE *pxOriginalTOS;
 
 	pxTopOfStack--;
 
-	/* Some optimisation levels use the stack differently to others.  This 
+	/* Some optimisation levels use the stack differently to others.  This
 	means the interrupt flags cannot always be stored on the stack and will
 	instead be stored in a variable, which is then saved as part of the
 	tasks context. */
@@ -198,7 +198,7 @@ portBASE_TYPE xPortStartScheduler( void )
 	prvSetupTimerInterrupt();
 
 	/* Start the first task. */
-	vPortISRStartFirstTask();	
+	vPortISRStartFirstTask();
 
 	/* Should not get here! */
 	return 0;
@@ -235,7 +235,7 @@ void vTickISR (unsigned int nIRQ, void *pParam)
 static void prvSetupTimerInterrupt( void )
 {
 	unsigned long ulCompareMatch;
-	
+
 
 	/* Calculate the match value required for our wanted tick rate. */
 	ulCompareMatch = 1000000 / configTICK_RATE_HZ;
@@ -264,4 +264,3 @@ static void prvSetupTimerInterrupt( void )
 	irqUnblock();
 }
 /*-----------------------------------------------------------*/
-
