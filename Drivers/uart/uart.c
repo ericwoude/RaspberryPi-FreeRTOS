@@ -4,8 +4,7 @@
 
 #include "uart.h"
 
-
-int notmain ( void )
+void uart_init()
 {
     unsigned int ra;
 
@@ -19,31 +18,50 @@ int notmain ( void )
     PUT32(AUX_MU_BAUD_REG,270);
 
     ra=GET32(GPFSEL1);
-    ra&=~(7<<12); //gpio14
-    ra|=2<<12;    //alt5
-    PUT32(GPFSEL1,ra);
+    ra&=~(7<<12);       //gpio14
+    ra|=2<<12;          //alt5
+    ra&=~(7<<15);       //gpio15
+    ra|=2<<15;          //alt5
+    PUT32(GPFSEL1, ra);
 
     PUT32(GPPUD,0);
     for(ra=0;ra<150;ra++) dummy(ra);
-    PUT32(GPPUDCLK0,(1<<14));
+    PUT32(GPPUDCLK0,(1<<14)|(1<<15));
     for(ra=0;ra<150;ra++) dummy(ra);
     PUT32(GPPUDCLK0,0);
 
-    PUT32(AUX_MU_CNTL_REG,2);
-
-    ra=0;
-    while(1)
-    {
-        while(1)
-        {
-            if(GET32(AUX_MU_LSR_REG)&0x20) break;
-        }
-        PUT32(AUX_MU_IO_REG,0x30+(ra++&7));
-    }
-
-    return(0);
+    PUT32(AUX_MU_CNTL_REG,3);
 }
 
+void uart_send(unsigned int c)
+{
+    while (1)
+    {
+        if(GET32(AUX_MU_LSR_REG)&0x20) break;
+    }
+
+    PUT32(AUX_MU_IO_REG,c);
+}
+
+void uart_print(char *s)
+{
+    while (*s != 0)
+    {
+        uart_send((unsigned int) *s);
+        s++;
+    }
+
+    uart_send(0x0D);
+    uart_send(0x0A);
+}
+
+void uart_flush()
+{
+    while (1)
+    {
+      if((GET32(AUX_MU_LSR_REG)&0x100)==0) break;
+    }
+}
 
 //-------------------------------------------------------------------------
 //

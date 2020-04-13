@@ -78,7 +78,7 @@ void task1(void *pParam) {
 	while(1) {
 		i++;
 		SetGpio(16, 1);
-		vTaskDelay(200);
+		vTaskDelay(500);
 	}
 }
 
@@ -93,6 +93,11 @@ void task2(void *pParam) {
 	}
 }
 
+void task3(void *pParam) {
+	uart_print("test");
+	vTaskDelay(50);
+}
+
 
 /**
  *	This is the systems main entry, some call it a boot thread.
@@ -102,10 +107,13 @@ void task2(void *pParam) {
  **/
 void main (void)
 {
+	uart_init();
+
 	SetGpioFunction(16, 1);			// RDY led
 
 	xTaskCreate(task1, "LED_0", 128, NULL, 0, NULL);
 	xTaskCreate(task2, "LED_1", 128, NULL, 0, NULL);
+	xTaskCreate(task3, "PRINT", 128, NULL, 0, NULL);
 
 	vTaskStartScheduler();
 
