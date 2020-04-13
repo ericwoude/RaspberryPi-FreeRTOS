@@ -1,6 +1,6 @@
 ;/*
 ;    FreeRTOS V7.2.0 - Copyright (C) 2012 Real Time Engineers Ltd.
-;	
+;
 ;
 ;    ***************************************************************************
 ;     *                                                                       *
@@ -40,7 +40,7 @@
 ;    FreeRTOS WEB site.
 ;
 ;    1 tab == 4 spaces!
-;    
+;
 ;    ***************************************************************************
 ;     *                                                                       *
 ;     *    Having a problem?  Start by reading the FAQ "My application does   *
@@ -50,17 +50,17 @@
 ;     *                                                                       *
 ;    ***************************************************************************
 ;
-;    
-;    http://www.FreeRTOS.org - Documentation, training, latest information, 
+;
+;    http://www.FreeRTOS.org - Documentation, training, latest information,
 ;    license and contact details.
-;    
+;
 ;    http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
 ;    including FreeRTOS+Trace - an indispensable productivity tool.
 ;
-;    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell 
-;    the code with commercial support, indemnification, and middleware, under 
+;    Real Time Engineers ltd license FreeRTOS to High Integrity Systems, who sell
+;    the code with commercial support, indemnification, and middleware, under
 ;    the OpenRTOS brand: http://www.OpenRTOS.com.  High Integrity Systems also
-;    provide a safety engineered and independently SIL3 certified version under 
+;    provide a safety engineered and independently SIL3 certified version under
 ;    the SafeRTOS brand: http://www.SafeRTOS.com.
 ;*/
 
@@ -74,14 +74,14 @@
 .extern main
 	.section .init
 	.globl _start
-;; 
+;;
 _start:
 	;@ All the following instruction should be read as:
 	;@ Load the address at symbol into the program counter.
-	
+
 	ldr	pc,reset_handler		;@ 	Processor Reset handler 		-- we will have to force this on the raspi!
 	;@ Because this is the first instruction executed, of cause it causes an immediate branch into reset!
-	
+
 	ldr pc,undefined_handler	;@ 	Undefined instruction handler 	-- processors that don't have thumb can emulate thumb!
     ldr pc,swi_handler			;@ 	Software interrupt / TRAP (SVC) -- system SVC handler for switching to kernel mode.
     ldr pc,prefetch_handler		;@ 	Prefetch/abort handler.
@@ -143,8 +143,8 @@ zero_loop:
 	blt		zero_loop
 
 	bl 		irqBlock
-	
-	
+
+
 	;@ 	mov	sp,#0x1000000
 	b main									;@ We're ready?? Lets start main execution!
 	.section .text
@@ -163,7 +163,21 @@ unused:
 
 fiq:
 	b fiq
-	
+
 hang:
 	b hang
 
+;@ These are used for the UART driver.
+.globl PUT32
+PUT32:
+    str r1,[r0]
+    bx lr
+
+.globl GET32
+GET32:
+    ldr r0,[r0]
+    bx lr
+
+.globl dummy
+dummy:
+    bx lr

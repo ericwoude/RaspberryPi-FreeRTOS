@@ -18,6 +18,11 @@ OBJECTS += $(BUILD_DIR)FreeRTOS/Source/tasks.o
 OBJECTS += $(BUILD_DIR)Drivers/irq/irq.o
 OBJECTS += $(BUILD_DIR)Drivers/gpio/gpio.o
 
+#
+# UART driver
+#
+OBJECTS += $(BUILD_DIR)Drivers/uart/uart.o
+
 $(BUILD_DIR)FreeRTOS/Source/portable/GCC/RaspberryPi/port.o: CFLAGS += -I $(BASE)Demo/
 
 #

@@ -70,6 +70,7 @@
 
 #include "irq/irq.h"
 #include "gpio/gpio.h"
+#include "uart/uart.h"
 
 void task1(void *pParam) {
 
