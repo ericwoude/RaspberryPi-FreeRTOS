@@ -94,8 +94,12 @@ void task2(void *pParam) {
 }
 
 void task3(void *pParam) {
-	uart_print("test");
-	vTaskDelay(50);
+    int i = 0;
+    while (1) {
+        i++;
+    	uart_print("test");
+    	vTaskDelay(500);
+    }
 }
 
 

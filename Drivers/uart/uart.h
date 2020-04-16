@@ -1,11 +1,14 @@
 /*
- *  UART driver
+ * Author:      Eric van der Woude
+ * Description: UART library by David Welch, modified to work
+ *              with FreeRTOS on the Raspberry Pi B+.
+ *
+ * The external functions are defined in startup.s.
  */
 
 #ifndef _UART_H_
 #define _UART_H_
 
-/* These functions are defined in startup.s. */
 extern void PUT32(unsigned int, unsigned int);
 extern unsigned int GET32(unsigned int);
 extern void dummy(unsigned int);
@@ -35,7 +38,6 @@ extern void dummy(unsigned int);
 void uart_init();
 void uart_send(unsigned int c);
 void uart_print(char *s);
-void uart_flush();
 
 #endif
 

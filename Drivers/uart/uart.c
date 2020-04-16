@@ -1,8 +1,11 @@
 /*
- *  UART driver
+ * Author:      Eric van der Woude
+ * Description: UART library by David Welch, modified to work
+ *              with FreeRTOS on the Raspberry Pi B+.
  */
 
 #include "uart.h"
+
 
 void uart_init()
 {
@@ -51,16 +54,7 @@ void uart_print(char *s)
         s++;
     }
 
-    uart_send(0x0D);
     uart_send(0x0A);
-}
-
-void uart_flush()
-{
-    while (1)
-    {
-      if((GET32(AUX_MU_LSR_REG)&0x100)==0) break;
-    }
 }
 
 //-------------------------------------------------------------------------
