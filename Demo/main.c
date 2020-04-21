@@ -97,8 +97,8 @@ void task3(void *pParam) {
     int i = 0;
     while (1) {
         i++;
-    	uart_print("test");
     	vTaskDelay(500);
+    	uart_print_int(1337);
     }
 }
 

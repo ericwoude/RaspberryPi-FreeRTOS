@@ -38,6 +38,8 @@ extern void dummy(unsigned int);
 void uart_init();
 void uart_send(unsigned int c);
 void uart_print(char *s);
+void uart_print_int(int i);
+int _int_to_string(char *s, int n);
 
 #endif
 

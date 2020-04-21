@@ -46,6 +46,40 @@ void uart_send(unsigned int c)
     PUT32(AUX_MU_IO_REG,c);
 }
 
+void uart_print_int(int i)
+{
+    char *buffer;
+    _int_to_string(buffer, i);
+
+    uart_print(buffer);
+}
+
+/* Converts a given integer n to string and
+ * stores the result in a given string.
+ * 
+ * Code obtained from:
+ * https://www.go4expert.com/articles/converting-integer-string-c-sprintf-t28037/
+ */
+int _int_to_string(char *s, int n)
+{
+    unsigned int i = 1000000000;
+
+    if (((signed) n) < 0 ) {
+        *s++ = '-';
+        n = -n;
+    }
+
+    while(i > n) i /= 10;
+
+    do {
+        *s++ = '0' + (n - n % i) / i % 10;
+    } while( i /= 10 );
+
+    *s = 0;
+
+    return n;
+}
+
 void uart_print(char *s)
 {
     while (*s != 0)
