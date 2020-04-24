@@ -48,7 +48,7 @@ void uart_send(unsigned int c)
 
 void uart_print_int(int i)
 {
-    char *buffer;
+    char *buffer = "";
     _int_to_string(buffer, i);
 
     uart_print(buffer);
@@ -60,7 +60,7 @@ void uart_print_int(int i)
  * Code obtained from:
  * https://www.go4expert.com/articles/converting-integer-string-c-sprintf-t28037/
  */
-int _int_to_string(char *s, int n)
+int _int_to_string(char *s, unsigned int n)
 {
     unsigned int i = 1000000000;
 
