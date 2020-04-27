@@ -189,6 +189,7 @@ PRIVILEGED_DATA static xList xPendingReadyList;							/*< Tasks that have been r
 /* File private variables. --------------------------------*/
 PRIVILEGED_DATA static volatile unsigned portBASE_TYPE uxCurrentNumberOfTasks 	= ( unsigned portBASE_TYPE ) 0U;
 PRIVILEGED_DATA static volatile portTickType xTickCount 						= ( portTickType ) 0U;
+PRIVILEGED_DATA volatile portTickType xRunTimeCount 	      				= ( portTickType ) 0U;
 PRIVILEGED_DATA static unsigned portBASE_TYPE uxTopUsedPriority	 				= tskIDLE_PRIORITY;
 PRIVILEGED_DATA static volatile unsigned portBASE_TYPE uxTopReadyPriority 		= tskIDLE_PRIORITY;
 PRIVILEGED_DATA static volatile signed portBASE_TYPE xSchedulerRunning 			= pdFALSE;
@@ -1085,7 +1086,7 @@ portBASE_TYPE xReturn;
 		/* Create the idle task without storing its handle. */
 		xReturn = xTaskCreate( prvIdleTask, ( signed char * ) "IDLE", tskIDLE_STACK_SIZE, ( void * ) NULL, ( tskIDLE_PRIORITY | portPRIVILEGE_BIT ), NULL );
 	}
-	#endif	
+	#endif
 
 	#if ( configUSE_TIMERS == 1 )
 	{
@@ -1114,7 +1115,7 @@ portBASE_TYPE xReturn;
 		/* If configGENERATE_RUN_TIME_STATS is defined then the following
 		macro must be defined to configure the timer/counter used to generate
 		the run time counter time base. */
-		portCONFIGURE_TIMER_FOR_RUN_TIME_STATS();		
+		portCONFIGURE_TIMER_FOR_RUN_TIME_STATS();
 
 		/* Setting up the timer tick is hardware specific and thus in the
 		portable interface. */
@@ -1456,6 +1457,7 @@ tskTCB * pxTCB;
 	if( uxSchedulerSuspended == ( unsigned portBASE_TYPE ) pdFALSE )
 	{
 		++xTickCount;
+		++xRunTimeCount;
 		if( xTickCount == ( portTickType ) 0U )
 		{
 			xList *pxTemp;
@@ -2504,7 +2506,3 @@ void vTaskExitCritical( void )
 
 #endif
 /*-----------------------------------------------------------*/
-
-
-
-
