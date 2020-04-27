@@ -72,20 +72,58 @@
 #include "gpio/gpio.h"
 #include "uart/uart.h"
 
+/*
+ *	All tasks have the following format:
+ * 	1. Ticktype variables for start and difference.
+ *	2. Keep track of the start tick count.
+ *  3. Task code.
+ *  4. Calculating the difference in tick and send stats using UART
+ *
+ */
+
 void task1(void *pParam)
 {
+	portTickType xStart, xDifference;
+
 	for ( ;; ) {
+		xStart = xTaskGetTickCount();
+
 		SetGpio(16, 1);
-		vTaskDelay(200);
+		vTaskDelay(1000 / portTICK_RATE_MS);
+
+	  xDifference = xTaskGetTickCount() - xStart;
+		uart_print_stats("LED_0", (unsigned int) xDifference, 1000 / portTICK_RATE_MS);
 	}
 }
 
 void task2(void *pParam)
 {
-    for ( ;; ) {
-		vTaskDelay(100);
+	portTickType xStart, xDifference;
+
+  for ( ;; ) {
+		xStart = xTaskGetTickCount();
+
+		vTaskDelay(1000 / portTICK_RATE_MS);
 		SetGpio(16, 0);
-		vTaskDelay(100);
+		vTaskDelay(1000 / portTICK_RATE_MS);
+
+		xDifference = xTaskGetTickCount() - xStart;
+		uart_print_stats("LED_1", (unsigned int) xDifference, 2000 / portTICK_RATE_MS);
+	}
+}
+
+void task3(void *pParam)
+{
+	portTickType xStart, xDifference;
+
+  for ( ;; ) {
+		xStart = xTaskGetTickCount();
+
+		uart_print("Hello World\n");
+		vTaskDelay(1000 / portTICK_RATE_MS);
+
+		xDifference = xTaskGetTickCount() - xStart;
+		uart_print_stats("HELLO_WORLD", (unsigned int) xDifference, 1000 / portTICK_RATE_MS);
 	}
 }
 
@@ -99,12 +137,13 @@ int main (void)
 {
 	uart_init();
 
-	SetGpioFunction(16, 1);			// RDY led
+	SetGpioFunction(16, 1);	// RDY led
 
 	xTaskCreate(task1, "LED_0", 128, NULL, 0, NULL);
 	xTaskCreate(task2, "LED_1", 128, NULL, 0, NULL);
+	xTaskCreate(task3, "HELLO_WORLD", 128, NULL, 0, NULL);
 
 	vTaskStartScheduler();
 
-    return 0;
+  return 0;
 }
