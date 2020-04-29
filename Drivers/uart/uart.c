@@ -72,6 +72,8 @@ void uart_print_stats(char *name, unsigned int i, unsigned int j)
 
   _int_to_string(buffer, j);
   uart_print(buffer);
+
+  uart_print("\n");
 }
 
 /* Converts a given integer n to string and
