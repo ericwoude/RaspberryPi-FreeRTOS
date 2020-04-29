@@ -21,10 +21,10 @@ void uart_init()
   PUT32(AUX_MU_BAUD_REG,270);
 
   ra=GET32(GPFSEL1);
-  ra&=~(7<<12);       //gpio14
-  ra|=2<<12;          //alt5
-  ra&=~(7<<15);       //gpio15
-  ra|=2<<15;          //alt5
+  ra&=~(7<<12);       // gpio14
+  ra|=2<<12;          // alt5
+  ra&=~(7<<15);       // gpio15
+  ra|=2<<15;          // alt5
   PUT32(GPFSEL1, ra);
 
   PUT32(GPPUD,0);
@@ -48,13 +48,13 @@ void uart_send(unsigned int c)
 
 void uart_print(char *s)
 {
-  while (*s != 0)
-  {
-    uart_send((unsigned int) *s);
-    s++;
-  }
+    while (*s != 0)
+    {
+        uart_send((unsigned int) *s);
+        s++;
+    }
 
-  uart_send(0x0A);
+    uart_send(0x0A);
 }
 
 /*
@@ -72,8 +72,6 @@ void uart_print_stats(char *name, unsigned int i, unsigned int j)
 
   _int_to_string(buffer, j);
   uart_print(buffer);
-
-  uart_print("");
 }
 
 /* Converts a given integer n to string and

@@ -119,7 +119,7 @@ void task3(void *pParam)
   for ( ;; ) {
 		xStart = xTaskGetTickCount();
 
-		uart_print("Hello World\n");
+		uart_print("Hello World");
 		vTaskDelay(1000 / portTICK_RATE_MS);
 
 		xDifference = xTaskGetTickCount() - xStart;
@@ -141,7 +141,7 @@ int main (void)
 
 	xTaskCreate(task1, "LED_0", 128, NULL, 0, NULL);
 	xTaskCreate(task2, "LED_1", 128, NULL, 0, NULL);
-	xTaskCreate(task3, "HELLO_WORLD", 128, NULL, 0, NULL);
+	// xTaskCreate(task3, "HELLO_WORLD", 128, NULL, 0, NULL);
 
 	vTaskStartScheduler();
 
